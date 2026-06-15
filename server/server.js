@@ -171,6 +171,27 @@ app.post(
   }
 );
 
+app.post("/likes", (req, res) => {
+  const { post_id, user_id } = req.body;
+
+  const sql =
+    "INSERT INTO likes (post_id, user_id) VALUES (?, ?)";
+
+  db.query(sql, [post_id, user_id], (err, result) => {
+    if (err) {
+      console.log(err);
+
+      return res.status(500).json({
+        message: "Failed to like post",
+      });
+    }
+
+    res.json({
+      message: "Post liked",
+    });
+  });
+});
+
 app.get("/posts", (req, res) => {
   const sql = `
     SELECT
@@ -214,6 +235,38 @@ app.get("/posts/:id", (req, res) => {
     }
 
     res.json(result[0]);
+  });
+});
+
+app.get("/posts/:id/likes", (req, res) => {
+  const { id } = req.params;
+
+  const sql =
+    "SELECT COUNT(*) AS totalLikes FROM likes WHERE post_id = ?";
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+
+    res.json(result[0]);
+  });
+});
+
+app.delete("/likes", (req, res) => {
+  const { post_id, user_id } = req.body;
+
+  const sql =
+    "DELETE FROM likes WHERE post_id = ? AND user_id = ?";
+
+  db.query(sql, [post_id, user_id], (err, result) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+
+    res.json({
+      message: "Like removed",
+    });
   });
 });
 
