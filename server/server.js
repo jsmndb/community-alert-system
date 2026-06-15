@@ -9,6 +9,14 @@ const path = require("path");
 
 dotenv.config();
 
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+
+// Multer Configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -22,20 +30,21 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({
-  storage,
-});
+const upload = multer({ storage });
 
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-app.use("/uploads", express.static("uploads"));
+// =====================================
+// BASIC ROUTE
+// =====================================
 
 app.get("/", (req, res) => {
   res.send("Community Alert API is running");
 });
 
+// =====================================
+// AUTHENTICATION
+// =====================================
+
+// Register
 app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -51,6 +60,7 @@ app.post("/register", async (req, res) => {
       (err, result) => {
         if (err) {
           console.log(err);
+
           return res.status(500).json({
             message: "Registration failed",
           });
@@ -70,6 +80,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
+// Login
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -124,6 +135,11 @@ app.post("/login", (req, res) => {
   });
 });
 
+// =====================================
+// POSTS
+// =====================================
+
+// Create Post
 app.post(
   "/posts",
   upload.single("image"),
@@ -171,27 +187,7 @@ app.post(
   }
 );
 
-app.post("/likes", (req, res) => {
-  const { post_id, user_id } = req.body;
-
-  const sql =
-    "INSERT INTO likes (post_id, user_id) VALUES (?, ?)";
-
-  db.query(sql, [post_id, user_id], (err, result) => {
-    if (err) {
-      console.log(err);
-
-      return res.status(500).json({
-        message: "Failed to like post",
-      });
-    }
-
-    res.json({
-      message: "Post liked",
-    });
-  });
-});
-
+// Get All Posts
 app.get("/posts", (req, res) => {
   const sql = `
     SELECT
@@ -216,6 +212,7 @@ app.get("/posts", (req, res) => {
   });
 });
 
+// Get Single Post
 app.get("/posts/:id", (req, res) => {
   const { id } = req.params;
 
@@ -238,6 +235,33 @@ app.get("/posts/:id", (req, res) => {
   });
 });
 
+// =====================================
+// LIKES
+// =====================================
+
+// Like Post
+app.post("/likes", (req, res) => {
+  const { post_id, user_id } = req.body;
+
+  const sql =
+    "INSERT INTO likes (post_id, user_id) VALUES (?, ?)";
+
+  db.query(sql, [post_id, user_id], (err, result) => {
+    if (err) {
+      console.log(err);
+
+      return res.status(500).json({
+        message: "Failed to like post",
+      });
+    }
+
+    res.json({
+      message: "Post liked",
+    });
+  });
+});
+
+// Count Likes
 app.get("/posts/:id/likes", (req, res) => {
   const { id } = req.params;
 
@@ -253,6 +277,7 @@ app.get("/posts/:id/likes", (req, res) => {
   });
 });
 
+// Unlike Post
 app.delete("/likes", (req, res) => {
   const { post_id, user_id } = req.body;
 
@@ -269,6 +294,85 @@ app.delete("/likes", (req, res) => {
     });
   });
 });
+
+// =====================================
+// COMMENTS
+// =====================================
+
+// Add Comment
+app.post("/comments", (req, res) => {
+  const { post_id, user_id, comment } = req.body;
+
+  const sql = `
+    INSERT INTO comments
+    (post_id, user_id, comment)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(
+    sql,
+    [post_id, user_id, comment],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+
+        return res.status(500).json({
+          message: "Failed to add comment",
+        });
+      }
+
+      res.json({
+        message: "Comment added successfully",
+      });
+    }
+  );
+});
+
+// Get Comments of a Post
+app.get("/posts/:id/comments", (req, res) => {
+  const { id } = req.params;
+
+  const sql = `
+    SELECT
+      comments.*,
+      users.name
+    FROM comments
+    JOIN users
+      ON comments.user_id = users.id
+    WHERE comments.post_id = ?
+    ORDER BY comments.created_at DESC
+  `;
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+
+    res.json(result);
+  });
+});
+
+// Delete Comment
+app.delete("/comments/:id", (req, res) => {
+  const { id } = req.params;
+
+  const sql =
+    "DELETE FROM comments WHERE id = ?";
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+
+    res.json({
+      message: "Comment deleted",
+    });
+  });
+});
+
+// =====================================
+// SERVER
+// =====================================
 
 const PORT = 5000;
 
