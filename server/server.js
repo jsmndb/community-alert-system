@@ -4,8 +4,27 @@ const dotenv = require("dotenv");
 const db = require("./db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
 
 dotenv.config();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({
+  storage,
+});
 
 const app = express();
 
@@ -102,6 +121,99 @@ app.post("/login", (req, res) => {
         email: user.email,
       },
     });
+  });
+});
+
+app.post(
+  "/posts",
+  upload.single("image"),
+  (req, res) => {
+    const {
+      user_id,
+      title,
+      description,
+      category,
+    } = req.body;
+
+    const image = req.file
+      ? req.file.filename
+      : null;
+
+    const sql = `
+      INSERT INTO posts
+      (user_id, title, description, category, image)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+      sql,
+      [
+        user_id,
+        title,
+        description,
+        category,
+        image,
+      ],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+
+          return res.status(500).json({
+            message: "Failed to create post",
+          });
+        }
+
+        res.json({
+          message: "Post created successfully",
+        });
+      }
+    );
+  }
+);
+
+app.get("/posts", (req, res) => {
+  const sql = `
+    SELECT
+      posts.*,
+      users.name
+    FROM posts
+    JOIN users
+      ON posts.user_id = users.id
+    ORDER BY posts.created_at DESC
+  `;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+
+      return res.status(500).json({
+        message: "Failed to fetch posts",
+      });
+    }
+
+    res.json(result);
+  });
+});
+
+app.get("/posts/:id", (req, res) => {
+  const { id } = req.params;
+
+  const sql = `
+    SELECT
+      posts.*,
+      users.name
+    FROM posts
+    JOIN users
+      ON posts.user_id = users.id
+    WHERE posts.id = ?
+  `;
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+
+    res.json(result[0]);
   });
 });
 
