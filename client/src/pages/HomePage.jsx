@@ -7,6 +7,7 @@ function HomePage() {
   const [likes, setLikes] = useState({});
   const [comments, setComments] = useState({});
   const [commentText, setCommentText] = useState({});
+  const [likedPosts, setLikedPosts] = useState({});
 
   useEffect(() => {
     fetchPosts();
@@ -27,6 +28,7 @@ function HomePage() {
       response.data.forEach((post) => {
         fetchLikes(post.id);
         fetchComments(post.id);
+        fetchLikedStatus(post.id);
       });
     } catch (error) {
       console.log(error);
@@ -50,22 +52,44 @@ function HomePage() {
 
   const handleLike = async (postId) => {
     try {
-      await axios.post(
-        "http://localhost:5000/likes",
-        {
-          post_id: postId,
-          user_id: user.id,
-        }
-      );
+      if (likedPosts[postId]) {
+
+        await axios.delete(
+          "http://localhost:5000/likes",
+          {
+            data: {
+              post_id: postId,
+              user_id: user.id,
+            },
+          }
+        );
+
+        setLikedPosts((prev) => ({
+          ...prev,
+          [postId]: false,
+        }));
+
+      } else {
+
+        await axios.post(
+          "http://localhost:5000/likes",
+          {
+            post_id: postId,
+            user_id: user.id,
+          }
+        );
+
+        setLikedPosts((prev) => ({
+          ...prev,
+          [postId]: true,
+        }));
+      }
 
       fetchLikes(postId);
+
     } catch (error) {
-  if (error.response) {
-    alert(error.response.data.message);
-  } else {
-    alert("Something went wrong");
-  }
-}
+      console.log(error);
+    }
   };
 
   const fetchComments = async (postId) => {
@@ -99,6 +123,21 @@ function HomePage() {
       setCommentText((prev) => ({
         ...prev,
         [postId]: "",
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchLikedStatus = async (postId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/posts/${postId}/liked/${user.id}`
+      );
+
+      setLikedPosts((prev) => ({
+        ...prev,
+        [postId]: response.data.liked,
       }));
     } catch (error) {
       console.log(error);
@@ -155,15 +194,17 @@ function HomePage() {
               )}
 
               <p className="mt-2">
-                👍 {likes[post.id] || 0} Likes
+                ❤️ {likes[post.id] || 0} Likes
               </p>
 
               <button
-                className="btn btn-primary btn-sm"
-                onClick={() => handleLike(post.id)}
-              >
-                👍 Like
-              </button>
+                  className="btn btn-primary btn-sm"
+                  onClick={() => handleLike(post.id)}
+                >
+                  {likedPosts[post.id]
+                    ? "❤️ Liked"
+                    : "❤️ Like"}
+                </button>
 
               <div className="mt-3">
                 <h6>Comments</h6>

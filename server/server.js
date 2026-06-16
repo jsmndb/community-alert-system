@@ -318,6 +318,27 @@ app.delete("/likes", (req, res) => {
   });
 });
 
+app.get("/posts/:postId/liked/:userId", (req, res) => {
+  const { postId, userId } = req.params;
+
+  const sql =
+    "SELECT * FROM likes WHERE post_id = ? AND user_id = ?";
+
+  db.query(
+    sql,
+    [postId, userId],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json(err);
+      }
+
+      res.json({
+        liked: result.length > 0,
+      });
+    }
+  );
+});
+
 // =====================================
 // COMMENTS
 // =====================================
