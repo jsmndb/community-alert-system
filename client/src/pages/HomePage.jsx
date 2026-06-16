@@ -7,13 +7,14 @@ function HomePage() {
   const [likes, setLikes] = useState({});
   const [comments, setComments] = useState({});
   const [commentText, setCommentText] = useState({});
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
 
   useEffect(() => {
     fetchPosts();
   }, []);
+
+    const user = JSON.parse(
+    localStorage.getItem("user")
+  );
 
   const fetchPosts = async () => {
     try {
@@ -59,8 +60,12 @@ function HomePage() {
 
       fetchLikes(postId);
     } catch (error) {
-      console.log(error);
-    }
+  if (error.response) {
+    alert(error.response.data.message);
+  } else {
+    alert("Something went wrong");
+  }
+}
   };
 
   const fetchComments = async (postId) => {

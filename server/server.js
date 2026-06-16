@@ -243,22 +243,45 @@ app.get("/posts/:id", (req, res) => {
 app.post("/likes", (req, res) => {
   const { post_id, user_id } = req.body;
 
-  const sql =
-    "INSERT INTO likes (post_id, user_id) VALUES (?, ?)";
+  const checkSql =
+    "SELECT * FROM likes WHERE post_id = ? AND user_id = ?";
 
-  db.query(sql, [post_id, user_id], (err, result) => {
-    if (err) {
-      console.log(err);
+  db.query(
+    checkSql,
+    [post_id, user_id],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Server error",
+        });
+      }
 
-      return res.status(500).json({
-        message: "Failed to like post",
-      });
+      if (result.length > 0) {
+        return res.status(400).json({
+          message: "You already liked this post",
+        });
+      }
+
+      const insertSql =
+        "INSERT INTO likes (post_id, user_id) VALUES (?, ?)";
+
+      db.query(
+        insertSql,
+        [post_id, user_id],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({
+              message: "Failed to like post",
+            });
+          }
+
+          res.json({
+            message: "Post liked",
+          });
+        }
+      );
     }
-
-    res.json({
-      message: "Post liked",
-    });
-  });
+  );
 });
 
 // Count Likes
