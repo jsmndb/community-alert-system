@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -145,6 +146,9 @@ function HomePage() {
   };
 
   return (
+    <>
+      <Navbar />
+      
     <div className="container mt-4">
 
       <div className="mb-3">
@@ -250,6 +254,7 @@ function HomePage() {
       )}
 
     </div>
+    </>
   );
 }
 

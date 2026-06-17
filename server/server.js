@@ -339,6 +339,25 @@ app.get("/posts/:postId/liked/:userId", (req, res) => {
   );
 });
 
+app.get("/users/:id/posts", (req, res) => {
+  const { id } = req.params;
+
+  const sql = `
+    SELECT *
+    FROM posts
+    WHERE user_id = ?
+    ORDER BY created_at DESC
+  `;
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+
+    res.json(result);
+  });
+});
+
 // =====================================
 // COMMENTS
 // =====================================

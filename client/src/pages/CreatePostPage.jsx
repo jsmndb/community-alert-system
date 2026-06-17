@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 function CreatePostPage() {
   const [title, setTitle] = useState("");
@@ -47,6 +48,9 @@ function CreatePostPage() {
   };
 
   return (
+    <>
+      <Navbar />
+
     <div className="container mt-4">
       <div
         className="card p-4 mx-auto"
@@ -125,6 +129,7 @@ function CreatePostPage() {
         </form>
       </div>
     </div>
+    </>
   );
 }
 
