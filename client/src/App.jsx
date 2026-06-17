@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import CreatePostPage from "./pages/CreatePostPage";
 import ProfilePage from "./pages/ProfilePage";
+import EditPostPage from "./pages/EditPostPage";
 
 function App() {
   return (
@@ -38,6 +39,11 @@ function App() {
         <Route
           path="/profile"
           element={<ProfilePage />}
+        />
+
+        <Route
+          path="/edit-post/:id"
+          element={<EditPostPage />}
         />
 
       </Routes>

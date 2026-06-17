@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 
 function ProfilePage() {
   const [posts, setPosts] = useState([]);
@@ -107,6 +108,13 @@ function ProfilePage() {
                 )}
 
                 <div className="mt-3">
+
+                  <Link
+                    to={`/edit-post/${post.id}`}
+                    className="btn btn-primary btn-sm ms-2"
+                  >
+                    Edit
+                  </Link>
 
                   <button
                     className="btn btn-danger btn-sm"
