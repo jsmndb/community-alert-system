@@ -9,6 +9,7 @@ function HomePage() {
   const [comments, setComments] = useState({});
   const [commentText, setCommentText] = useState({});
   const [likedPosts, setLikedPosts] = useState({});
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchPosts();
@@ -145,10 +146,16 @@ function HomePage() {
     }
   };
 
+  const filteredPosts = posts.filter((post) =>
+  post.title.toLowerCase().includes(search.toLowerCase()) ||
+  post.description.toLowerCase().includes(search.toLowerCase()) ||
+  post.category.toLowerCase().includes(search.toLowerCase())
+);
+
   return (
     <>
       <Navbar />
-      
+
     <div className="container mt-4">
 
       <div className="mb-3">
@@ -160,6 +167,13 @@ function HomePage() {
         </Link>
       </div>
 
+      <input
+        type="text"
+        className="form-control mb-3"
+        placeholder="Search posts..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
       <h2 className="mb-4">
         Community Feed
       </h2>
@@ -167,7 +181,7 @@ function HomePage() {
       {posts.length === 0 ? (
         <p>No posts found.</p>
       ) : (
-        posts.map((post) => (
+        filteredPosts.map((post) => (
           <div
             key={post.id}
             className="card mb-3"
