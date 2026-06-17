@@ -146,10 +146,18 @@ function HomePage() {
     }
   };
 
-  const filteredPosts = posts.filter((post) =>
-  post.title.toLowerCase().includes(search.toLowerCase()) ||
-  post.description.toLowerCase().includes(search.toLowerCase()) ||
-  post.category.toLowerCase().includes(search.toLowerCase())
+const filteredPosts = posts.filter((post) =>
+  (post.title || "")
+    .toLowerCase()
+    .includes(search.toLowerCase()) ||
+
+  (post.description || "")
+    .toLowerCase()
+    .includes(search.toLowerCase()) ||
+
+  (post.category || "")
+    .toLowerCase()
+    .includes(search.toLowerCase())
 );
 
   return (
