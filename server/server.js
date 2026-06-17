@@ -318,6 +318,7 @@ app.delete("/likes", (req, res) => {
   });
 });
 
+
 app.get("/posts/:postId/liked/:userId", (req, res) => {
   const { postId, userId } = req.params;
 
@@ -429,6 +430,102 @@ app.delete("/comments/:id", (req, res) => {
 
     res.json({
       message: "Comment deleted",
+    });
+  });
+});
+
+
+app.put("/posts/:id", (req, res) => {
+  const { id } = req.params;
+
+  const {
+    title,
+    description,
+    category,
+  } = req.body;
+
+  const sql = `
+    UPDATE posts
+    SET
+      title = ?,
+      description = ?,
+      category = ?
+    WHERE id = ?
+  `;
+
+  db.query(
+    sql,
+    [
+      title,
+      description,
+      category,
+      id,
+    ],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Failed to update post",
+        });
+      }
+
+      res.json({
+        message: "Post updated successfully",
+      });
+    }
+  );
+});
+
+app.delete("/posts/:id", (req, res) => {
+  const { id } = req.params;
+
+  console.log("Deleting post:", id);
+
+  const deleteLikesSql =
+    "DELETE FROM likes WHERE post_id = ?";
+
+  const deleteCommentsSql =
+    "DELETE FROM comments WHERE post_id = ?";
+
+  const deletePostSql =
+    "DELETE FROM posts WHERE id = ?";
+
+  db.query(deleteLikesSql, [id], (err) => {
+    if (err) {
+      console.log(err);
+
+      return res.status(500).json({
+        message: "Failed to delete likes",
+      });
+    }
+
+    db.query(deleteCommentsSql, [id], (err) => {
+      if (err) {
+        console.log(err);
+
+        return res.status(500).json({
+          message: "Failed to delete comments",
+        });
+      }
+
+      db.query(deletePostSql, [id], (err, result) => {
+        if (err) {
+          console.log(err);
+
+          return res.status(500).json({
+            message: "Failed to delete post",
+          });
+        }
+
+        if (result.affectedRows === 0) {
+          return res.status(404).json({
+            message: "Post not found",
+          });
+        }
+
+        res.json({
+          message: "Post deleted successfully",
+        });
+      });
     });
   });
 });
