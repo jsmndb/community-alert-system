@@ -7,6 +7,7 @@ import HomePage from "./pages/HomePage";
 import CreatePostPage from "./pages/CreatePostPage";
 import ProfilePage from "./pages/ProfilePage";
 import EditPostPage from "./pages/EditPostPage";
+import PublicProfilePage from "./pages/PublicProfilePage";
 
 function App() {
   return (
@@ -46,6 +47,11 @@ function App() {
         <Route
           path="/edit-post/:id"
           element={<EditPostPage />}
+        />
+
+        <Route
+          path="/user/:id"
+          element={<PublicProfilePage />}
         />
 
       </Routes>

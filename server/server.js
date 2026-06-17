@@ -187,6 +187,12 @@ app.post(
   }
 );
 
+app.get("/test", (req, res) => {
+  res.json({
+    message: "test route works"
+  });
+});
+
 // Get All Posts
 app.get("/posts", (req, res) => {
   const sql = `
@@ -416,6 +422,34 @@ app.get("/posts/:id/comments", (req, res) => {
   });
 });
 
+app.get("/users/:id", (req, res) => {
+  const { id } = req.params;
+
+  console.log("GET /users/:id called with:", id);
+
+  const sql =
+    "SELECT id, name, email FROM users WHERE id = ?";
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.json(result[0]);
+  });
+});
+
+app.get("/", (req, res) => {
+  res.send("Community Alert API is running");
+});
+
 // Delete Comment
 app.delete("/comments/:id", (req, res) => {
   const { id } = req.params;
@@ -433,7 +467,6 @@ app.delete("/comments/:id", (req, res) => {
     });
   });
 });
-
 
 app.put("/posts/:id", (req, res) => {
   const { id } = req.params;

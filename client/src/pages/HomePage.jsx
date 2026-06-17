@@ -200,7 +200,13 @@ const filteredPosts = posts.filter((post) =>
               <h5>{post.title}</h5>
 
               <p>
-                <strong>Posted by:</strong> {post.name}
+                <strong>Posted by:</strong>{" "}
+
+                <Link
+                  to={`/user/${post.user_id}`}
+                >
+                  {post.name}
+                </Link>
               </p>
 
               <p>{post.description}</p>
