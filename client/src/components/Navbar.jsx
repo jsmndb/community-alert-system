@@ -1,58 +1,158 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Navbar() {
-  const navigate = useNavigate();
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  const [notifications, setNotifications] = useState([]);
 
-    navigate("/login");
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+
+  useEffect(() => {
+
+    if(user){
+      fetchNotifications();
+    }
+
+  }, []);
+
+
+
+  const fetchNotifications = async () => {
+
+    try {
+
+      const response = await axios.get(
+
+        `http://localhost:5000/notifications/${user.id}`
+
+      );
+
+
+      setNotifications(response.data);
+
+
+    } catch(error){
+
+      console.log(error);
+
+    }
+
   };
 
+
+
   return (
-    <nav className="navbar navbar-dark bg-dark px-3">
 
-      <Link
-        className="navbar-brand"
-        to="/home"
-      >
-        Community Alert
-      </Link>
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 
-      <div>
+      <div className="container">
+
 
         <Link
-          className="btn btn-outline-light me-2"
+          className="navbar-brand"
           to="/home"
         >
-          Home
+          Community Alert
         </Link>
 
-        <Link
-          className="btn btn-outline-light me-2"
-          to="/create-post"
-        >
-          Create Post
-        </Link>
 
-        <Link
-          className="btn btn-outline-light me-2"
-          to="/profile"
-        >
-          Profile
-        </Link>
 
-        <button
-          className="btn btn-danger"
-          onClick={logout}
-        >
-          Logout
-        </button>
+        <div>
+
+
+          <Link
+            className="btn btn-dark me-2"
+            to="/create-post"
+          >
+            Create Post
+          </Link>
+
+
+
+          <div
+            className="btn-group"
+          >
+
+            <button
+              className="btn btn-dark dropdown-toggle"
+              data-bs-toggle="dropdown"
+            >
+
+              🔔
+
+              {
+                notifications.length > 0 &&
+                (
+                  <span>
+                    {" "}
+                    {notifications.length}
+                  </span>
+                )
+              }
+
+            </button>
+
+
+
+            <ul className="dropdown-menu dropdown-menu-end">
+
+
+              {
+                notifications.length === 0 ?
+
+                (
+
+                  <li className="dropdown-item">
+                    No notifications
+                  </li>
+
+                )
+
+                :
+
+                notifications.map((item)=>(
+
+                  <li
+                    key={item.id}
+                    className="dropdown-item"
+                  >
+
+                    {item.name}
+
+                    {" "}
+
+                    {item.message}
+
+
+                  </li>
+
+
+                ))
+
+              }
+
+
+            </ul>
+
+
+          </div>
+
+
+        </div>
+
 
       </div>
+
+
     </nav>
+
   );
+
 }
+
 
 export default Navbar;

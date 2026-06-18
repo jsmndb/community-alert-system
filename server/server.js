@@ -474,52 +474,6 @@ app.post("/comments", (req, res) => {
 
 });
 
-app.get("/notifications/:userId",
-(req,res)=>{
-
-
-const {userId}=req.params;
-
-
-const sql = `
-SELECT
-notifications.*,
-users.name
-
-FROM notifications
-
-JOIN users
-
-ON notifications.sender_id = users.id
-
-WHERE notifications.user_id = ?
-
-ORDER BY created_at DESC
-
-`;
-
-
-db.query(
-sql,
-[userId],
-(err,result)=>{
-
-
-if(err){
-
-return res.status(500).json(err);
-
-}
-
-
-res.json(result);
-
-
-});
-
-
-});
-
 // Get Comments of a Post
 app.get("/posts/:id/comments", (req, res) => {
   const { id } = req.params;
@@ -566,6 +520,49 @@ app.get("/users/:id", (req, res) => {
 
     res.json(result[0]);
   });
+});
+
+app.get("/notifications/:userId", (req, res) => {
+
+  const { userId } = req.params;
+
+
+  const sql = `
+    SELECT
+      notifications.*,
+      users.name
+
+    FROM notifications
+
+    JOIN users
+
+    ON notifications.sender_id = users.id
+
+    WHERE notifications.user_id = ?
+
+    ORDER BY notifications.created_at DESC
+  `;
+
+
+  db.query(
+    sql,
+    [userId],
+    (err, result) => {
+
+      if (err) {
+        console.log(err);
+
+        return res.status(500).json({
+          message: "Failed to fetch notifications"
+        });
+      }
+
+
+      res.json(result);
+
+    }
+  );
+
 });
 
 app.get("/", (req, res) => {
