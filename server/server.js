@@ -247,47 +247,121 @@ app.get("/posts/:id", (req, res) => {
 
 // Like Post
 app.post("/likes", (req, res) => {
-  const { post_id, user_id } = req.body;
+
+  const {
+    post_id,
+    user_id
+  } = req.body;
 
   const checkSql =
-    "SELECT * FROM likes WHERE post_id = ? AND user_id = ?";
+  "SELECT * FROM likes WHERE post_id = ? AND user_id = ?";
 
   db.query(
     checkSql,
-    [post_id, user_id],
-    (err, result) => {
-      if (err) {
+    [
+      post_id,
+      user_id
+    ],
+    (err,result)=>{
+
+      if(err){
         return res.status(500).json({
-          message: "Server error",
+          message:"Server error"
         });
       }
 
-      if (result.length > 0) {
+      if(result.length > 0){
+
         return res.status(400).json({
-          message: "You already liked this post",
+          message:"You already liked this post"
         });
+
       }
 
       const insertSql =
-        "INSERT INTO likes (post_id, user_id) VALUES (?, ?)";
+      `
+      INSERT INTO likes
+      (post_id,user_id)
+
+      VALUES (?,?)
+      `;
 
       db.query(
         insertSql,
-        [post_id, user_id],
-        (err, result) => {
-          if (err) {
+        [
+          post_id,
+          user_id
+        ],
+        (err)=>{
+
+          if(err){
+
             return res.status(500).json({
-              message: "Failed to like post",
+              message:"Failed to like post"
             });
+
           }
 
+          // CREATE NOTIFICATION
+          const ownerSql =
+          `
+          SELECT user_id
+          FROM posts
+          WHERE id = ?
+          `;
+
+          db.query(
+            ownerSql,
+            [post_id],
+            (err,post)=>{
+
+              if(post.length > 0){
+
+                const ownerId =
+                post[0].user_id;
+
+                if(ownerId !== user_id){
+
+                  const notificationSql =
+                  `
+                  INSERT INTO notifications
+                  (user_id, sender_id, post_id, message)
+
+                  VALUES (?,?,?,?)
+                  `;
+
+                  db.query(
+                    notificationSql,
+
+                    [
+                      ownerId,
+                      user_id,
+                      post_id,
+                      "liked your post"
+                    ]
+
+                  );
+
+                }
+
+              }
+
+            }
+
+          );
+
           res.json({
-            message: "Post liked",
+            message:"Post liked"
           });
+
         }
+
       );
+
     }
+
   );
+
 });
 
 // Count Likes
@@ -324,7 +398,86 @@ app.delete("/likes", (req, res) => {
   });
 });
 
+app.post("/comment-likes", (req,res)=>{
 
+  const {
+    comment_id,
+    user_id
+  } = req.body;
+
+  const sql = `
+  INSERT INTO comment_likes
+  (comment_id,user_id)
+
+  VALUES (?,?)
+  `;
+
+  db.query(
+    sql,
+    [
+      comment_id,
+      user_id
+    ],
+    (err)=>{
+
+      if(err){
+
+        return res.status(400).json({
+          message:"Already liked"
+        });
+
+      }
+
+      res.json({
+        message:"Comment liked"
+      });
+
+    }
+
+  );
+
+app.get("/comments/:id/likes",(req,res)=>{
+
+
+const {id}=req.params;
+
+
+
+const sql =
+`
+SELECT COUNT(*) AS totalLikes
+
+FROM comment_likes
+
+WHERE comment_id = ?
+
+`;
+
+
+
+db.query(
+sql,
+[id],
+
+(err,result)=>{
+
+
+if(err){
+
+return res.status(500).json(err);
+
+}
+
+
+res.json(result[0]);
+
+
+});
+
+
+});
+
+});
 app.get("/posts/:postId/liked/:userId", (req, res) => {
   const { postId, userId } = req.params;
 

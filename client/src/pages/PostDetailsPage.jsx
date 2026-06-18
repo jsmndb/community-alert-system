@@ -185,28 +185,52 @@ function PostDetailsPage() {
                 {item.name}
               </b>
 
-              <p>
+              <div
+                key={item.id}
+                className="border p-2 mt-3"
+                >
+
+                <b>
+                {item.name}
+                </b>
+
+                <p>
                 {item.comment}
-              </p>
+                </p>
 
+                <button
 
+                className="btn btn-sm btn-outline-danger"
+
+                onClick={async()=>{await axios.post("http://localhost:5000/comment-likes",
+                {
+                comment_id:item.id,
+                user_id:user.id
+                }
+                );
+
+                fetchComments();
+
+                }}
+
+                >
+                ❤️ Like
+
+                </button>
+
+                </div>
             </div>
 
           ))
         }
 
-
-
       </div>
 
-
     </div>
-
 
     </>
 
   );
 }
-
 
 export default PostDetailsPage;
