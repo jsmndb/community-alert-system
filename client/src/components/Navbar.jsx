@@ -83,24 +83,24 @@ function Navbar() {
             className="btn-group"
           >
 
-            <button
-              className="btn btn-dark dropdown-toggle"
-              data-bs-toggle="dropdown"
-            >
+            <Link
+              to="/notifications"
+              className="btn btn-dark"
+              >
 
               🔔
 
               {
-                notifications.length > 0 &&
-                (
-                  <span>
-                    {" "}
-                    {notifications.length}
-                  </span>
-                )
+              notifications.length > 0 &&
+              (
+                <span>
+                {" "}
+                {notifications.length}
+                </span>
+              )
               }
 
-            </button>
+              </Link>
 
             <ul className="dropdown-menu dropdown-menu-end">
 

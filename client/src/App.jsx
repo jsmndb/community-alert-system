@@ -9,6 +9,7 @@ import ProfilePage from "./pages/ProfilePage";
 import EditPostPage from "./pages/EditPostPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
 import PostDetailsPage from "./pages/PostDetailsPage";
+import NotificationPage from "./pages/NotificationPage";
 
 function App() {
   return (
@@ -59,6 +60,11 @@ function App() {
           path="/post/:id"
           element={<PostDetailsPage />}
         />
+
+        <Route
+          path="/notifications"
+          element={<NotificationPage />}
+          />
 
       </Routes>
     </BrowserRouter>
