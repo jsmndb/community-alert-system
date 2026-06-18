@@ -565,6 +565,38 @@ app.get("/notifications/:userId", (req, res) => {
 
 });
 
+app.put("/notifications/:id/read", (req, res) => {
+
+  const { id } = req.params;
+
+
+  const sql =
+    `
+    UPDATE notifications
+    SET is_read = TRUE
+    WHERE id = ?
+    `;
+
+
+  db.query(
+    sql,
+    [id],
+    (err, result) => {
+
+      if(err){
+        return res.status(500).json(err);
+      }
+
+
+      res.json({
+        message:"Notification marked as read"
+      });
+
+    }
+  );
+
+});
+
 app.get("/", (req, res) => {
   res.send("Community Alert API is running");
 });

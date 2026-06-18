@@ -10,7 +10,6 @@ function Navbar() {
     localStorage.getItem("user")
   );
 
-
   useEffect(() => {
 
     if(user){
@@ -18,8 +17,6 @@ function Navbar() {
     }
 
   }, []);
-
-
 
   const fetchNotifications = async () => {
 
@@ -31,9 +28,7 @@ function Navbar() {
 
       );
 
-
       setNotifications(response.data);
-
 
     } catch(error){
 
@@ -43,7 +38,23 @@ function Navbar() {
 
   };
 
+  const markAsRead = async (id) => {
 
+  try {
+
+    await axios.put(
+      `http://localhost:5000/notifications/${id}/read`
+    );
+
+    fetchNotifications();
+
+  } catch(error){
+
+    console.log(error);
+
+  }
+
+};
 
   return (
 
@@ -59,10 +70,7 @@ function Navbar() {
           Community Alert
         </Link>
 
-
-
         <div>
-
 
           <Link
             className="btn btn-dark me-2"
@@ -70,8 +78,6 @@ function Navbar() {
           >
             Create Post
           </Link>
-
-
 
           <div
             className="btn-group"
@@ -96,10 +102,7 @@ function Navbar() {
 
             </button>
 
-
-
             <ul className="dropdown-menu dropdown-menu-end">
-
 
               {
                 notifications.length === 0 ?
@@ -110,26 +113,37 @@ function Navbar() {
                     No notifications
                   </li>
 
-                )
-
-                :
+                ):
 
                 notifications.map((item)=>(
 
-                  <li
-                    key={item.id}
-                    className="dropdown-item"
-                  >
+                <li
 
-                    {item.name}
+                key={item.id}
 
-                    {" "}
+                className="dropdown-item"
 
-                    {item.message}
+                onClick={() =>
+                  markAsRead(item.id)
+                }
 
+                style={{
+                cursor:"pointer"
+                }}
 
-                  </li>
+                >
 
+                {item.is_read ? "🔔" : "🔴"}
+
+                {" "}
+
+                {item.name}
+
+                {" "}
+
+                {item.message}
+
+                </li>
 
                 ))
 
