@@ -447,7 +447,7 @@ app.post("/comments", (req, res) => {
                   ownerId,
                   user_id,
                   post_id,
-                  "Someone commented on your post"
+                  `${comment}`
                 ]
 
               );

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 function NotificationPage(){
 
   const [notifications,setNotifications] = useState([]);
-
+  const navigate = useNavigate();
 
   const user = JSON.parse(
     localStorage.getItem("user")
@@ -40,23 +41,15 @@ function NotificationPage(){
 
   };
 
-
-
   return (
-
     <>
-
     <Navbar/>
 
-
     <div className="container mt-4">
-
 
       <h2>
         Notifications
       </h2>
-
-
 
       {
         notifications.length === 0 ?
@@ -65,20 +58,24 @@ function NotificationPage(){
           <div className="alert alert-secondary">
             No notifications yet
           </div>
-        )
-
-
-        :
-
+        ):
 
         notifications.map((item)=>(
 
-
           <div
             key={item.id}
-            className="card p-3 mb-3"
-          >
 
+            className="card p-3 mb-3"
+
+            onClick={() =>
+            navigate(`/post/${item.post_id}`)
+            }
+
+            style={{
+            cursor:"pointer"
+            }}
+
+            >
 
             <h5>
 
@@ -88,22 +85,15 @@ function NotificationPage(){
                 : "🔴"
               }
 
-
               {" "}
-
 
               {item.name}
 
-
             </h5>
-
-
 
             <p>
               {item.message}
             </p>
-
-
 
             <small>
 
@@ -115,23 +105,18 @@ function NotificationPage(){
 
             </small>
 
-
           </div>
-
 
         ))
 
       }
 
-
     </div>
-
 
     </>
 
   );
 
 }
-
 
 export default NotificationPage;
