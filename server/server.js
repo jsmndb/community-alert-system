@@ -371,31 +371,153 @@ app.get("/users/:id/posts", (req, res) => {
 
 // Add Comment
 app.post("/comments", (req, res) => {
-  const { post_id, user_id, comment } = req.body;
 
-  const sql = `
+  const {
+    post_id,
+    user_id,
+    comment
+  } = req.body;
+
+
+  const commentSql = `
     INSERT INTO comments
     (post_id, user_id, comment)
     VALUES (?, ?, ?)
   `;
 
+
   db.query(
-    sql,
-    [post_id, user_id, comment],
-    (err, result) => {
-      if (err) {
+    commentSql,
+    [
+      post_id,
+      user_id,
+      comment
+    ],
+    (err,result)=>{
+
+
+      if(err){
         console.log(err);
 
         return res.status(500).json({
-          message: "Failed to add comment",
+          message:"Failed to add comment"
         });
       }
 
+
+
+      const ownerSql =
+      `
+      SELECT user_id 
+      FROM posts 
+      WHERE id = ?
+      `;
+
+
+      db.query(
+        ownerSql,
+        [post_id],
+        (err,post)=>{
+
+
+          if(post.length > 0){
+
+
+            const ownerId =
+            post[0].user_id;
+
+
+
+            if(ownerId !== user_id){
+
+
+              const notificationSql =
+              `
+              INSERT INTO notifications
+              (user_id, sender_id, post_id, message)
+
+              VALUES (?, ?, ?, ?)
+              `;
+
+
+              db.query(
+                notificationSql,
+
+                [
+                  ownerId,
+                  user_id,
+                  post_id,
+                  "Someone commented on your post"
+                ]
+
+              );
+
+
+            }
+
+          }
+
+
+        }
+      );
+
+
+
       res.json({
-        message: "Comment added successfully",
+        message:"Comment added successfully"
       });
+
+
+
     }
   );
+
+});
+
+app.get("/notifications/:userId",
+(req,res)=>{
+
+
+const {userId}=req.params;
+
+
+const sql = `
+SELECT
+notifications.*,
+users.name
+
+FROM notifications
+
+JOIN users
+
+ON notifications.sender_id = users.id
+
+WHERE notifications.user_id = ?
+
+ORDER BY created_at DESC
+
+`;
+
+
+db.query(
+sql,
+[userId],
+(err,result)=>{
+
+
+if(err){
+
+return res.status(500).json(err);
+
+}
+
+
+res.json(result);
+
+
+});
+
+
 });
 
 // Get Comments of a Post
