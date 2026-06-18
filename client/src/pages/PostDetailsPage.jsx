@@ -7,67 +7,116 @@ function PostDetailsPage() {
 
   const { id } = useParams();
 
+
   const [post, setPost] = useState(null);
+
   const [comments, setComments] = useState([]);
+
   const [comment, setComment] = useState("");
+
 
   const user = JSON.parse(
     localStorage.getItem("user")
   );
 
 
+
   useEffect(() => {
+
     fetchPost();
+
     fetchComments();
+
   }, []);
+
+
 
 
   const fetchPost = async () => {
 
     try {
 
+
       const response = await axios.get(
+
         `http://localhost:5000/posts/${id}`
+
       );
+
 
       setPost(response.data);
 
+
+
     } catch(error){
+
       console.log(error);
+
     }
 
   };
+
+
+
 
 
   const fetchComments = async () => {
 
     try {
 
+
       const response = await axios.get(
+
         `http://localhost:5000/posts/${id}/comments`
+
       );
+
 
       setComments(response.data);
 
+
+
     } catch(error){
+
       console.log(error);
+
     }
 
   };
 
 
+
+
+
+
+
   const addComment = async () => {
+
+
+    if(comment.trim() === ""){
+      return;
+    }
+
 
     try {
 
+
       await axios.post(
+
         "http://localhost:5000/comments",
+
         {
-          post_id: id,
-          user_id: user.id,
-          comment
+
+          post_id:id,
+
+          user_id:user.id,
+
+          comment:comment
+
         }
+
       );
+
 
 
       setComment("");
@@ -75,58 +124,156 @@ function PostDetailsPage() {
       fetchComments();
 
 
+
     } catch(error){
+
       console.log(error);
+
     }
+
 
   };
 
 
+
+
+
+
+
+
+
+  const likeComment = async (commentId) => {
+
+
+    try {
+
+
+      const response = await axios.post(
+
+        "http://localhost:5000/comment-likes",
+
+        {
+
+          comment_id:commentId,
+
+          user_id:user.id
+
+        }
+
+      );
+
+
+
+      alert(response.data.message);
+
+
+
+    }
+
+    catch(error){
+
+
+      console.log(error);
+
+
+      alert(
+        error.response.data.message
+      );
+
+
+    }
+
+
+  };
+
+
+
+
+
+
+
+
   if(!post){
+
     return <p>Loading...</p>;
+
   }
+
+
+
+
+
 
 
   return (
 
     <>
+
+
     <Navbar />
 
+
+
     <div className="container mt-4">
+
+
+
 
 
       <div className="card p-4">
 
 
         <h2>
+
           {post.title}
+
         </h2>
 
 
+
         <p>
+
           Posted by:
+
           {" "}
+
           {post.name}
+
         </p>
+
+
 
 
         <p>
+
           {post.description}
+
         </p>
+
+
 
 
         <span className="badge bg-primary">
+
           {post.category}
+
         </span>
 
 
 
+
         {
+
           post.image &&
 
           <img
-            src={`http://localhost:5000/uploads/${post.image}`}
+
+            src={
+              `http://localhost:5000/uploads/${post.image}`
+            }
+
             className="img-fluid mt-3"
+
           />
 
         }
@@ -137,100 +284,172 @@ function PostDetailsPage() {
 
 
 
+
+
+
+
       <div className="card p-4 mt-4">
 
+
         <h4>
+
           Comments
+
         </h4>
+
+
 
 
         <input
 
+
           className="form-control"
+
 
           placeholder="Write a comment"
 
+
           value={comment}
 
+
           onChange={(e)=>
+
             setComment(e.target.value)
+
           }
+
 
         />
 
 
+
+
+
+
         <button
+
 
           className="btn btn-primary mt-2"
 
+
           onClick={addComment}
+
 
         >
 
           Comment
 
+
         </button>
 
 
 
+
+
+
+
         {
+
           comments.map((item)=>(
 
+
+
             <div
+
+
               key={item.id}
-              className="border p-2 mt-3"
+
+
+              className="border p-3 mt-3"
+
+
+
             >
 
+
+
+
               <b>
+
                 {item.name}
+
               </b>
 
-              <div
-                key={item.id}
-                className="border p-2 mt-3"
-                >
 
-                <b>
-                {item.name}
-                </b>
 
-                <p>
+
+
+              <p>
+
                 {item.comment}
-                </p>
 
-                <button
+              </p>
+
+
+
+
+
+
+              <button
+
 
                 className="btn btn-sm btn-outline-danger"
 
-                onClick={async()=>{await axios.post("http://localhost:5000/comment-likes",
-                {
-                comment_id:item.id,
-                user_id:user.id
+
+                onClick={()=>
+
+
+                  likeComment(item.id)
+
+
                 }
-                );
 
-                fetchComments();
 
-                }}
+              >
 
-                >
+
                 ❤️ Like
 
-                </button>
 
-                </div>
+
+              </button>
+
+
+
+
+
+
             </div>
 
+
+
           ))
+
+
         }
+
+
+
 
       </div>
 
+
+
+
+
+
+
     </div>
+
+
+
+
 
     </>
 
   );
+
+
 }
 
 export default PostDetailsPage;
