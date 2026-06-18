@@ -197,7 +197,13 @@ const filteredPosts = posts.filter((post) =>
 
             <div className="card-body">
 
-              <h5>{post.title}</h5>
+              <Link to={`/post/${post.id}`}>
+
+              <h5>
+              {post.title}
+              </h5>
+
+              </Link>
 
               <p>
                 <strong>Posted by:</strong>{" "}

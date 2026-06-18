@@ -8,6 +8,7 @@ import CreatePostPage from "./pages/CreatePostPage";
 import ProfilePage from "./pages/ProfilePage";
 import EditPostPage from "./pages/EditPostPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
+import PostDetailsPage from "./pages/PostDetailsPage";
 
 function App() {
   return (
@@ -52,6 +53,11 @@ function App() {
         <Route
           path="/user/:id"
           element={<PublicProfilePage />}
+        />
+
+        <Route
+          path="/post/:id"
+          element={<PostDetailsPage />}
         />
 
       </Routes>
