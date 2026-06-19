@@ -627,6 +627,106 @@ app.post("/comments", (req, res) => {
 
 });
 
+app.post("/follow", (req, res) => {
+
+  const {
+    follower_id,
+    following_id
+  } = req.body;
+
+  const sql = `
+    INSERT INTO follows
+    (follower_id, following_id)
+    VALUES (?, ?)
+  `;
+
+  db.query(
+    sql,
+    [follower_id, following_id],
+    (err, result) => {
+
+      if (err) {
+        return res.status(400).json({
+          message: "Already following"
+        });
+      }
+
+      res.json({
+        message: "User followed"
+      });
+    }
+  );
+});
+
+app.delete("/follow", (req, res) => {
+
+  const {
+    follower_id,
+    following_id
+  } = req.body;
+
+  const sql = `
+    DELETE FROM follows
+    WHERE follower_id = ?
+    AND following_id = ?
+  `;
+
+  db.query(
+    sql,
+    [follower_id, following_id],
+    (err, result) => {
+
+      if(err){
+        return res.status(500).json(err);
+      }
+
+      res.json({
+        message:"Unfollowed"
+      });
+
+    }
+  );
+});
+
+app.get(
+  "/follow/:followerId/:followingId",
+  (req,res)=>{
+
+    const {
+      followerId,
+      followingId
+    } = req.params;
+
+    const sql = `
+      SELECT *
+      FROM follows
+      WHERE follower_id = ?
+      AND following_id = ?
+    `;
+
+    db.query(
+      sql,
+      [
+        followerId,
+        followingId
+      ],
+      (err,result)=>{
+
+        if(err){
+          return res.status(500).json(err);
+        }
+
+        res.json({
+          following:
+            result.length > 0
+        });
+
+      }
+    );
+
+  }
+);
+
 // Get Comments of a Post
 app.get("/posts/:id/comments", (req, res) => {
   const { id } = req.params;
