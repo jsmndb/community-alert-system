@@ -155,6 +155,13 @@ function Navbar() {
 
           </div>
 
+          <Link
+            to="/messages"
+            className="btn btn-outline-light"
+          >
+            Messages
+          </Link>
+
 
         </div>
 

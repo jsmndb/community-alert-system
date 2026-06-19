@@ -11,6 +11,7 @@ import PublicProfilePage from "./pages/PublicProfilePage";
 import PostDetailsPage from "./pages/PostDetailsPage";
 import NotificationPage from "./pages/NotificationPage";
 import ChatPage from "./pages/ChatPage";
+import InboxPage from "./pages/InboxPage";
 
 function App() {
   return (
@@ -70,6 +71,11 @@ function App() {
           <Route
           path="/chat/:id"
           element={<ChatPage />}
+        />
+
+        <Route
+          path="/messages"
+          element={<InboxPage />}
         />
 
       </Routes>

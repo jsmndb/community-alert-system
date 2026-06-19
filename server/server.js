@@ -816,7 +816,46 @@ app.get(
   }
 );
 
+app.get("/conversations/:userId", (req, res) => {
 
+  const { userId } = req.params;
+
+  const sql = `
+    SELECT DISTINCT
+      users.id,
+      users.name
+    FROM messages
+
+    JOIN users
+      ON (
+        users.id = messages.sender_id
+        OR
+        users.id = messages.receiver_id
+      )
+
+    WHERE
+      messages.sender_id = ?
+      OR
+      messages.receiver_id = ?
+
+    AND users.id != ?
+  `;
+
+  db.query(
+    sql,
+    [userId, userId, userId],
+    (err, result) => {
+
+      if(err){
+        return res.status(500).json(err);
+      }
+
+      res.json(result);
+
+    }
+  );
+
+});
 
 // Get Comments of a Post
 app.get("/posts/:id/comments", (req, res) => {
