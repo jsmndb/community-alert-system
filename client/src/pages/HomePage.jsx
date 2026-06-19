@@ -211,7 +211,9 @@ const filteredPosts = posts.filter((post) =>
                 <Link
                   to={`/user/${post.user_id}`}
                 >
-                  {post.name}
+                  <Link to={`/profile/${post.user_id}`}>
+                    {post.name}
+                  </Link>
                 </Link>
               </p>
 
