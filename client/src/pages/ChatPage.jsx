@@ -14,15 +14,19 @@ function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
 
+    useEffect(() => {
 
+        fetchMessages();
 
-  useEffect(() => {
+        const interval = setInterval(() => {
 
-    fetchMessages();
+            fetchMessages();
 
-  }, []);
+        }, 2000);
 
+        return () => clearInterval(interval);
 
+        }, []);
 
   const fetchMessages = async () => {
 
