@@ -857,6 +857,65 @@ app.get("/conversations/:userId", (req, res) => {
 
 });
 
+app.get("/messages/unread/:userId", (req, res) => {
+
+  const { userId } = req.params;
+
+  const sql = `
+    SELECT COUNT(*) AS totalUnread
+    FROM messages
+    WHERE receiver_id = ?
+    AND is_read = 0
+  `;
+
+  db.query(
+    sql,
+    [userId],
+    (err, result) => {
+
+      if(err){
+        return res.status(500).json(err);
+      }
+
+      res.json(result[0]);
+
+    }
+  );
+
+});
+
+app.put("/messages/read/:senderId/:receiverId", (req, res) => {
+
+  const {
+    senderId,
+    receiverId
+  } = req.params;
+
+  const sql = `
+    UPDATE messages
+    SET is_read = 1
+    WHERE sender_id = ?
+    AND receiver_id = ?
+  `;
+
+  db.query(
+    sql,
+    [senderId, receiverId],
+    (err, result) => {
+
+      if(err){
+        return res.status(500).json(err);
+      }
+
+      res.json({
+        message: "Messages marked as read"
+      });
+
+    }
+  );
+
+});
+
 // Get Comments of a Post
 app.get("/posts/:id/comments", (req, res) => {
   const { id } = req.params;
