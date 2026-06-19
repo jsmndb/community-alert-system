@@ -10,6 +10,7 @@ import EditPostPage from "./pages/EditPostPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
 import PostDetailsPage from "./pages/PostDetailsPage";
 import NotificationPage from "./pages/NotificationPage";
+import ChatPage from "./pages/ChatPage";
 
 function App() {
   return (
@@ -65,6 +66,11 @@ function App() {
           path="/notifications"
           element={<NotificationPage />}
           />
+
+          <Route
+          path="/chat/:id"
+          element={<ChatPage />}
+        />
 
       </Routes>
     </BrowserRouter>

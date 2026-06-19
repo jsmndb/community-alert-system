@@ -229,27 +229,40 @@ function ProfilePage() {
           {
             currentUser.id !== Number(id) && (
 
-              following ? (
+                <div>
 
-                <button
-                  className="btn btn-secondary"
-                  onClick={handleUnfollow}
-                >
-                  Following
-                </button>
+                  {
+                    following ? (
 
-              ) : (
+                      <button
+                        className="btn btn-secondary"
+                        onClick={handleUnfollow}
+                      >
+                        Following
+                      </button>
 
-                <button
-                  className="btn btn-primary"
-                  onClick={handleFollow}
-                >
-                  Follow
-                </button>
+                    ) : (
+
+                      <button
+                        className="btn btn-primary"
+                        onClick={handleFollow}
+                      >
+                        Follow
+                      </button>
+
+                    )
+                  }
+
+                  <Link
+                    to={`/chat/${id}`}
+                    className="btn btn-success ms-2"
+                  >
+                    Message
+                  </Link>
+
+                </div>
 
               )
-
-            )
           }
 
         </div>
@@ -322,14 +335,15 @@ function ProfilePage() {
                     currentUser.id ===
                     post.user_id && (
 
-                      <div className="mt-3">
+                      <>
+                        <div className="mt-3">
 
-                        <Link
-                          to={`/edit-post/${post.id}`}
-                          className="btn btn-primary btn-sm me-2"
-                        >
-                          Edit
-                        </Link>
+                          <Link
+                            to={`/edit-post/${post.id}`}
+                            className="btn btn-primary btn-sm me-2"
+                          >
+                            Edit
+                          </Link>
 
                         <button
                           className="btn btn-danger btn-sm"
@@ -340,7 +354,9 @@ function ProfilePage() {
                           Delete
                         </button>
 
-                      </div>
+                        </div>
+
+                      </>
 
                     )
                   }
