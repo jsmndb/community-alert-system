@@ -160,6 +160,29 @@ const filteredPosts = posts.filter((post) =>
     .includes(search.toLowerCase())
 );
 
+const getCategoryColor = (category) => {
+
+  switch(category){
+
+    case "Lost Item":
+      return "bg-warning text-dark";
+
+    case "Found Item":
+      return "bg-success";
+
+    case "Incident Report":
+      return "bg-secondary";
+
+    case "Community Alert":
+      return "bg-danger";
+
+    default:
+      return "bg-primary";
+
+  }
+
+};
+
 return (
   <>
     <Navbar />
@@ -258,7 +281,7 @@ return (
               {/* Category */}
 
               <span
-                className="badge bg-primary"
+                className={`badge ${getCategoryColor(post.category)}`}
                 style={{
                   fontSize: "0.8rem"
                 }}
