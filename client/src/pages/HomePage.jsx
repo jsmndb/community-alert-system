@@ -160,136 +160,217 @@ const filteredPosts = posts.filter((post) =>
     .includes(search.toLowerCase())
 );
 
-  return (
-    <>
-      <Navbar />
+return (
+  <>
+    <Navbar />
 
-    <div
-      className="container mt-4"
-      style={{
-        maxWidth: "850px"
-      }}
-    >
+    <div className="container mt-4 feed-container">
 
-      <div className="card mb-3 shadow-sm border-0">
+      <div className="card p-3 mb-4">
         <Link
           to="/create-post"
           className="btn btn-success"
         >
-          Create Post
+          ➕ Create Post
         </Link>
       </div>
 
       <input
         type="text"
-        className="form-control mb-3"
-        placeholder="Search posts..."
+        className="form-control mb-4"
+        placeholder="🔍 Search posts..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
+
       <h2 className="mb-4">
         Community Feed
       </h2>
 
-      {posts.length === 0 ? (
-        <p>No posts found.</p>
+      {filteredPosts.length === 0 ? (
+
+        <div className="alert alert-info">
+          No posts found.
+        </div>
+
       ) : (
+
         filteredPosts.map((post) => (
+
           <div
             key={post.id}
-            className="card mb-3"
+            className="card shadow-sm mb-4"
           >
 
             <div className="card-body">
 
-              <Link to={`/post/${post.id}`}>
+              {/* User Header */}
+
+              <div className="d-flex align-items-center mb-3">
+
+                <div
+                  className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    fontSize: "20px",
+                    fontWeight: "bold"
+                  }}
+                >
+                  {post.name?.charAt(0).toUpperCase()}
+                </div>
+
+                <div className="ms-3">
+
+                  <Link
+                    to={`/profile/${post.user_id}`}
+                    className="text-decoration-none"
+                  >
+                    <strong>
+                      {post.name}
+                    </strong>
+                  </Link>
+
+                  <div className="text-muted small">
+                    {new Date(
+                      post.created_at
+                    ).toLocaleString()}
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* Emergency Alert */}
 
               {
                 post.is_alert == 1 && (
 
-                  <div className="mb-2">
+                  <div className="alert alert-danger">
 
-                    <span className="badge bg-danger">
-
-                      🚨 Emergency Alert
-
-                    </span>
+                    🚨 Emergency Alert
 
                   </div>
 
                 )
               }
 
-              <h5>
-              {post.title}
-              </h5>
+              {/* Category */}
 
-              </Link>
-
-              <p>
-                <strong>Posted by:</strong>{" "}
-
-                <Link to={`/profile/${post.user_id}`}>
-                  {post.name}
-                </Link>
-              </p>
-
-              <p>{post.description}</p>
-
-              <span className="badge bg-primary">
+              <span className="badge bg-primary mb-2">
                 {post.category}
               </span>
 
-              {post.image && (
-                <div className="mt-3">
-                  <img
-                    src={post.image}
-                    alt={post.title || "Post image"}
-                    className="img-fluid rounded mt-2"
-                    style={{
-                      maxHeight: "500px",
-                      objectFit: "cover",
-                      width: "100%"
-                    }}
-                  />
-                </div>
-              )}
+              {/* Title */}
 
-              <p className="mt-2">
-                ❤️ {likes[post.id] || 0} Likes
+              <Link
+                to={`/post/${post.id}`}
+                className="text-decoration-none text-dark"
+              >
+                <h4 className="mt-2">
+                  {post.title}
+                </h4>
+              </Link>
+
+              {/* Description */}
+
+              <p>
+                {post.description}
               </p>
 
-              <button
-                  className="btn btn-primary btn-sm"
-                  onClick={() => handleLike(post.id)}
-                >
-                  {likedPosts[post.id]
-                    ? "❤️ Liked"
-                    : "❤️ Like"}
-                </button>
+              {/* Image */}
+
+              {
+                post.image && (
+
+                  <img
+                    src={`http://localhost:5000/uploads/${post.image}`}
+                    alt={post.title}
+                    className="img-fluid rounded mt-3"
+                    style={{
+                      width: "100%",
+                      maxHeight: "500px",
+                      objectFit: "cover"
+                    }}
+                  />
+
+                )
+              }
+
+              {/* Like Count */}
 
               <div className="mt-3">
-                <h6>Comments</h6>
 
-                {comments[post.id]?.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="border rounded p-2 mb-2"
-                  >
-                    <strong>{comment.name}</strong>
+                <strong>
+                  ❤️ {likes[post.id] || 0}
+                </strong>
 
-                    <p className="mb-0">
-                      {comment.comment}
-                    </p>
-                  </div>
-                ))}
               </div>
+
+              {/* Buttons */}
+
+              <div className="d-flex gap-2 mt-3">
+
+                <button
+                  className={
+                    likedPosts[post.id]
+                      ? "btn btn-danger"
+                      : "btn btn-outline-danger"
+                  }
+                  onClick={() =>
+                    handleLike(post.id)
+                  }
+                >
+                  {
+                    likedPosts[post.id]
+                      ? "❤️ Liked"
+                      : "❤️ Like"
+                  }
+                </button>
+
+              </div>
+
+              {/* Comments */}
+
+              <div className="mt-4">
+
+                <h6>
+                  💬 Comments
+                </h6>
+
+                {
+                  comments[post.id]?.map(
+                    (comment) => (
+
+                    <div
+                      key={comment.id}
+                      className="border rounded p-2 mb-2 bg-light"
+                    >
+
+                      <strong>
+                        {comment.name}
+                      </strong>
+
+                      <p className="mb-0">
+                        {comment.comment}
+                      </p>
+
+                    </div>
+
+                  ))
+                }
+
+              </div>
+
+              {/* Add Comment */}
 
               <input
                 type="text"
-                className="form-control mb-2"
+                className="form-control mt-3"
                 placeholder="Write a comment..."
-                value={commentText[post.id] || ""}
+                value={
+                  commentText[post.id] || ""
+                }
                 onChange={(e) =>
                   setCommentText((prev) => ({
                     ...prev,
@@ -299,21 +380,25 @@ const filteredPosts = posts.filter((post) =>
               />
 
               <button
-                className="btn btn-success btn-sm"
+                className="btn btn-success mt-2"
                 onClick={() =>
                   handleComment(post.id)
                 }
               >
                 Comment
               </button>
+
             </div>
+
           </div>
+
         ))
       )}
 
     </div>
-    </>
-  );
+
+  </>
+);
 }
 
 export default HomePage;
