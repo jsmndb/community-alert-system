@@ -383,12 +383,26 @@ return (
 
                     <div
                       key={comment.id}
-                      className="border rounded p-2 mb-2 bg-light"
+                      className="bg-light rounded p-3 mb-2"
                     >
 
-                      <strong>
-                        {comment.name}
-                      </strong>
+                      <div className="d-flex align-items-center mb-2">
+
+                        <div
+                          className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-2"
+                          style={{
+                            width: "35px",
+                            height: "35px"
+                          }}
+                        >
+                          {comment.name.charAt(0).toUpperCase()}
+                        </div>
+
+                        <strong>
+                          {comment.name}
+                        </strong>
+
+                      </div>
 
                       <p className="mb-0">
                         {comment.comment}
