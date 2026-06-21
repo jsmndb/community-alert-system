@@ -164,9 +164,14 @@ const filteredPosts = posts.filter((post) =>
     <>
       <Navbar />
 
-    <div className="container mt-4">
+    <div
+      className="container mt-4"
+      style={{
+        maxWidth: "850px"
+      }}
+    >
 
-      <div className="mb-3">
+      <div className="card mb-3 shadow-sm border-0">
         <Link
           to="/create-post"
           className="btn btn-success"
@@ -224,12 +229,8 @@ const filteredPosts = posts.filter((post) =>
               <p>
                 <strong>Posted by:</strong>{" "}
 
-                <Link
-                  to={`/user/${post.user_id}`}
-                >
-                  <Link to={`/profile/${post.user_id}`}>
-                    {post.name}
-                  </Link>
+                <Link to={`/profile/${post.user_id}`}>
+                  {post.name}
                 </Link>
               </p>
 
@@ -242,9 +243,14 @@ const filteredPosts = posts.filter((post) =>
               {post.image && (
                 <div className="mt-3">
                   <img
-                    src={`http://localhost:5000/uploads/${post.image}`}
-                    alt={post.title}
-                    className="img-fluid rounded"
+                    src={post.image}
+                    alt={post.title || "Post image"}
+                    className="img-fluid rounded mt-2"
+                    style={{
+                      maxHeight: "500px",
+                      objectFit: "cover",
+                      width: "100%"
+                    }}
                   />
                 </div>
               )}

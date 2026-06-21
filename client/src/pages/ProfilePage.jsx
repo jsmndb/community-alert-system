@@ -190,8 +190,6 @@ function ProfilePage() {
 
   }
 
-
-
   if (!profileUser) {
 
     return (
@@ -202,15 +200,13 @@ function ProfilePage() {
 
   }
 
-
-
   return (
     <>
       <Navbar />
 
       <div className="container mt-4">
 
-        <div className="card p-4 mb-4">
+        <div className="card shadow border-0 p-4 mb-4">
 
           <h2>
             {profileUser.name}

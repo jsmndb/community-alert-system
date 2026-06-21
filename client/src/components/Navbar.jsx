@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 function Navbar() {
 
   const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const user = JSON.parse(
     localStorage.getItem("user")
@@ -12,8 +13,20 @@ function Navbar() {
 
   useEffect(() => {
 
-    if(user){
+    if (user) {
+
       fetchNotifications();
+      fetchUnreadMessages();
+
+      const interval = setInterval(() => {
+
+        fetchNotifications();
+        fetchUnreadMessages();
+
+      }, 5000);
+
+      return () => clearInterval(interval);
+
     }
 
   }, []);
@@ -23,14 +36,32 @@ function Navbar() {
     try {
 
       const response = await axios.get(
-
         `http://localhost:5000/notifications/${user.id}`
-
       );
 
       setNotifications(response.data);
 
-    } catch(error){
+    } catch (error) {
+
+      console.log(error);
+
+    }
+
+  };
+
+  const fetchUnreadMessages = async () => {
+
+    try {
+
+      const response = await axios.get(
+        `http://localhost:5000/messages/unread/${user.id}`
+      );
+
+      setUnreadCount(
+        response.data.totalUnread
+      );
+
+    } catch (error) {
 
       console.log(error);
 
@@ -40,140 +71,114 @@ function Navbar() {
 
   const markAsRead = async (id) => {
 
-  try {
+    try {
 
-    await axios.put(
-      `http://localhost:5000/notifications/${id}/read`
-    );
+      await axios.put(
+        `http://localhost:5000/notifications/${id}/read`
+      );
 
-    fetchNotifications();
+      fetchNotifications();
 
-  } catch(error){
+    } catch (error) {
 
-    console.log(error);
+      console.log(error);
 
-  }
+    }
 
-};
+  };
 
   return (
 
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
 
-      <div className="container">
-
+      <div className="container-fluid px-3">
 
         <Link
-          className="navbar-brand"
+          className="navbar-brand fw-bold"
           to="/home"
         >
-          Community Alert
+          🚨 Community Alert
         </Link>
 
-        <div>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-          <Link
-            className="btn btn-dark me-2"
-            to="/create-post"
-          >
-            Create Post
-          </Link>
+        <div
+          className="collapse navbar-collapse justify-content-end"
+          id="navbarNav"
+        >
 
-          <div
-            className="btn-group"
-          >
+          <div className="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
+
+            <Link
+              className="btn btn-success"
+              to="/create-post"
+            >
+              Create Post
+            </Link>
 
             <Link
               to="/notifications"
-              className="btn btn-dark"
-              >
-
-              🔔
-
-              {
-              notifications.length > 0 &&
-              (
-                <span>
-                {" "}
-                {notifications.length}
-                </span>
-              )
-              }
-
-              </Link>
-
-            <ul className="dropdown-menu dropdown-menu-end">
+              className="btn btn-dark border"
+            >
+              🔔 Notifications
 
               {
-                notifications.length === 0 ?
+                notifications.length > 0 && (
 
-                (
+                  <span className="badge bg-danger ms-2">
+                    {notifications.length}
+                  </span>
 
-                  <li className="dropdown-item">
-                    No notifications
-                  </li>
-
-                ):
-
-                notifications.map((item)=>(
-
-                <li
-
-                key={item.id}
-
-                className="dropdown-item"
-
-                onClick={() =>
-                  markAsRead(item.id)
-                }
-
-                style={{
-                cursor:"pointer"
-                }}
-
-                >
-
-                {item.is_read ? "🔔" : "🔴"}
-
-                {" "}
-
-                {item.name}
-
-                {" "}
-
-                {item.message}
-
-                </li>
-
-                ))
-
+                )
               }
 
+            </Link>
 
-            </ul>
+            <Link
+              to="/messages"
+              className="btn btn-outline-light"
+            >
+              💬 Messages
 
+              {
+                unreadCount > 0 && (
+
+                  <span className="badge bg-danger ms-2">
+                    {unreadCount}
+                  </span>
+
+                )
+              }
+
+            </Link>
+
+            <Link
+              to={`/profile/${user?.id}`}
+              className="btn btn-outline-warning"
+            >
+              👤 Profile
+            </Link>
 
           </div>
 
-          <Link
-            to="/messages"
-            className="btn btn-outline-light"
-          >
-            Messages
-          </Link>
-
-
         </div>
 
-
       </div>
-
 
     </nav>
 
   );
 
 }
-
 
 export default Navbar;

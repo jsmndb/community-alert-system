@@ -58,8 +58,10 @@ function CreatePostPage() {
 
     <div className="container mt-4">
       <div
-        className="card p-4 mx-auto"
-        style={{ maxWidth: "600px" }}
+        className="card shadow border-0 p-4 mx-auto"
+        style={{
+          maxWidth: "700px"
+        }}
       >
         <h2>Create Post</h2>
 
