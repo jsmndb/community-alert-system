@@ -257,24 +257,32 @@ return (
 
               {/* Category */}
 
-              <span className="badge bg-primary mb-2">
+              <span
+                className="badge bg-primary"
+                style={{
+                  fontSize: "0.8rem"
+                }}
+              >
                 {post.category}
               </span>
-
-              {/* Title */}
 
               <Link
                 to={`/post/${post.id}`}
                 className="text-decoration-none text-dark"
               >
-                <h4 className="mt-2">
+                <h4
+                  className="mt-2 mb-1"
+                  style={{
+                    fontWeight: "600"
+                  }}
+                >
                   {post.title}
                 </h4>
               </Link>
 
-              {/* Description */}
-
-              <p>
+              <p
+                className="text-muted mb-2"
+              >
                 {post.description}
               </p>
 
@@ -286,7 +294,7 @@ return (
                   <img
                     src={`http://localhost:5000/uploads/${post.image}`}
                     alt={post.title}
-                    className="img-fluid rounded mt-3"
+                    className="img-fluid rounded mt-2"
                     style={{
                       width: "100%",
                       maxHeight: "500px",
@@ -299,7 +307,7 @@ return (
 
               {/* Like Count */}
 
-              <div className="mt-3">
+              <div className="mt-2">
 
                 <strong>
                   ❤️ {likes[post.id] || 0}
@@ -332,7 +340,7 @@ return (
 
               {/* Comments */}
 
-              <div className="mt-4">
+              <div className="mt-3">
 
                 <h6>
                   💬 Comments
