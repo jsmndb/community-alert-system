@@ -307,14 +307,22 @@ return (
 
               {/* Like Count */}
 
-              <div className="mt-2">
+              <div
+                className="d-flex gap-3 mt-2 text-muted"
+                style={{
+                  fontSize: "0.9rem"
+                }}
+              >
 
-                <strong>
-                  ❤️ {likes[post.id] || 0}
-                </strong>
+                <span>
+                  ❤️ {likes[post.id] || 0} Likes
+                </span>
+
+                <span>
+                  💬 {comments[post.id]?.length || 0} Comments
+                </span>
 
               </div>
-
               {/* Buttons */}
 
               <div className="d-flex gap-2 mt-3">
@@ -322,8 +330,8 @@ return (
                 <button
                   className={
                     likedPosts[post.id]
-                      ? "btn btn-danger"
-                      : "btn btn-outline-danger"
+                      ? "btn btn-danger btn-sm"
+                      : "btn btn-outline-danger btn-sm"
                   }
                   onClick={() =>
                     handleLike(post.id)
