@@ -8,6 +8,7 @@ function CreatePostPage() {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
+  const [isAlert, setIsAlert] = useState(false);
 
   const navigate = useNavigate();
 
@@ -31,7 +32,11 @@ function CreatePostPage() {
     formData.append("description", description);
     formData.append("category", category);
     formData.append("image", image);
-
+    
+    formData.append(
+      "is_alert",
+      isAlert ? 1 : 0
+    );
     try {
       const response = await axios.post(
         "http://localhost:5000/posts",
@@ -118,6 +123,27 @@ function CreatePostPage() {
               setImage(e.target.files[0])
             }
           />
+
+          <div className="form-check mb-3">
+
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="alert"
+              checked={isAlert}
+              onChange={(e) =>
+                setIsAlert(e.target.checked)
+              }
+            />
+
+            <label
+              className="form-check-label"
+              htmlFor="alert"
+            >
+              🚨 Emergency Alert
+            </label>
+
+          </div>
 
           <button
             className="btn btn-success w-100"

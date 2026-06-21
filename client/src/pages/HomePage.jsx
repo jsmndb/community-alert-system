@@ -199,6 +199,22 @@ const filteredPosts = posts.filter((post) =>
 
               <Link to={`/post/${post.id}`}>
 
+              {
+                post.is_alert == 1 && (
+
+                  <div className="mb-2">
+
+                    <span className="badge bg-danger">
+
+                      🚨 Emergency Alert
+
+                    </span>
+
+                  </div>
+
+                )
+              }
+
               <h5>
               {post.title}
               </h5>

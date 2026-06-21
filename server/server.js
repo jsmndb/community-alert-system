@@ -149,6 +149,7 @@ app.post(
       title,
       description,
       category,
+      is_alert
     } = req.body;
 
     const image = req.file
@@ -157,8 +158,8 @@ app.post(
 
     const sql = `
       INSERT INTO posts
-      (user_id, title, description, category, image)
-      VALUES (?, ?, ?, ?, ?)
+      (user_id, title, description, category, image, is_alert)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
@@ -169,6 +170,7 @@ app.post(
         description,
         category,
         image,
+        is_alert
       ],
       (err, result) => {
         if (err) {
@@ -202,7 +204,7 @@ app.get("/posts", (req, res) => {
     FROM posts
     JOIN users
       ON posts.user_id = users.id
-    ORDER BY posts.created_at DESC
+    ORDER BY is_alert DESC, created_at DESC
   `;
 
   db.query(sql, (err, result) => {
