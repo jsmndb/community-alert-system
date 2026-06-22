@@ -293,15 +293,20 @@ return (
                 to={`/post/${post.id}`}
                 className="text-decoration-none text-dark"
               >
-                <h4
-                  className="mt-2 mb-1"
-                  style={{
-                    fontWeight: "600"
-                  }}
-                >
+                <h5>
                   {post.title}
-                </h4>
+                </h5>
               </Link>
+
+              <p>
+                <strong>Posted by:</strong>{" "}
+
+                <Link
+                  to={`/profile/${post.user_id}`}
+                >
+                  {post.name}
+                </Link>
+              </p>
 
               <p
                 className="text-muted mb-2"

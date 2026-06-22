@@ -120,6 +120,13 @@ function Navbar() {
           <div className="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
 
             <Link
+              to="/home"
+              className="btn btn-outline-light"
+            >
+              🏠 Home
+            </Link>
+
+            <Link
               className="btn btn-success"
               to="/create-post"
             >
