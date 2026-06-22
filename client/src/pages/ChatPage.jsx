@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 
 function ChatPage() {
 
@@ -84,6 +85,24 @@ function ChatPage() {
       <Navbar />
 
       <div className="container mt-4">
+
+        <div className="d-flex gap-2 mb-3">
+
+          <Link
+            to="/home"
+            className="btn btn-outline-primary btn-sm"
+          >
+            🏠 Home
+          </Link>
+
+          <Link
+            to="/messages"
+            className="btn btn-outline-secondary btn-sm"
+          >
+            📥 Inbox
+          </Link>
+
+        </div>
 
         <div className="card p-4">
 
